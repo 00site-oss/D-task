@@ -1,0 +1,778 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Task</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --surface2: #27272a;
+      --border: #3f3f46;
+      --text: #fafafa;
+      --muted: #a1a1aa;
+      --accent: #3b82f6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --purple: #a78bfa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* LOGIN */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 360px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .login-card h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .login-card p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus { border-color: var(--accent); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; width: 100%; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-red { background: var(--red); color: #fff; }
+    .error-msg {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* DASHBOARD */
+    .app { max-width: 720px; margin: 0 auto; padding: 28px 20px 60px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .topbar h1 { font-size: 20px; font-weight: 700; }
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-chip span { font-weight: 600; font-size: 13px; }
+
+    .rank-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-top: 6px;
+    }
+    .rank-none { background: var(--surface2); color: var(--muted); }
+    .rank-silver { background: #71717a; color: #fff; }
+    .rank-gold { background: #eab308; color: #18181b; }
+    .rank-platinum { background: var(--purple); color: #18181b; }
+
+    /* METRICS */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .metric .lbl {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+    .metric .val {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* SECTION */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .section-head h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* QUIZ CARDS */
+    .quiz-list { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .quiz-card .left { flex: 1; min-width: 180px; }
+    .quiz-card .qid {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .quiz-card .preview {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+    }
+    .quiz-card .right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .pts {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .pts-sub { font-size: 11px; color: var(--muted); }
+    .quiz-actions { display: flex; gap: 8px; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+    }
+
+    /* ACTIVE QUIZ */
+    .active-quiz {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 8px;
+    }
+    .active-quiz h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .active-quiz .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .timer {
+      text-align: center;
+      font-size: 42px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin: 8px 0 20px;
+      letter-spacing: -1px;
+    }
+    .timer.warn { color: var(--amber); }
+    .timer.danger { color: var(--red); }
+    .q-block { margin-bottom: 14px; }
+    .q-block label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .active-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .active-actions .btn { flex: 1; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s ease;
+      z-index: 100;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.ok { border-color: var(--green); }
+    .toast.err { border-color: var(--red); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginView" class="login-wrap">
+    <div class="login-card">
+      <h1>D-Task</h1>
+      <p>Sign in with your UserID and PassID</p>
+      <div class="field">
+        <label>UserID</label>
+        <input id="loginUser" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>PassID</label>
+        <input id="loginPass" type="password" autocomplete="current-password" />
+      </div>
+      <button id="btnLogin" class="btn btn-primary">Sign in</button>
+      <div id="loginError" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardView" class="app hidden">
+    <div class="topbar">
+      <div>
+        <h1>Dashboard</h1>
+        <div id="rankBadge" class="rank-pill rank-none">—</div>
+      </div>
+      <div class="user-chip">
+        <span id="welcomeUser"></span>
+        <button id="btnLogout" class="btn btn-ghost">Logout</button>
+      </div>
+    </div>
+
+    <div class="metrics" id="statsGrid"></div>
+
+    <div class="section-head">
+      <h2>Available Quizzes</h2>
+      <button id="btnLoadTasks" class="btn btn-ghost">Refresh</button>
+    </div>
+
+    <div id="taskList" class="quiz-list"></div>
+
+    <!-- Active quiz panel -->
+    <div id="quizArea" class="active-quiz hidden">
+      <h3>Quiz in progress</h3>
+      <div id="quizTaskTitle" class="meta"></div>
+      <div id="quizTimer" class="timer">60</div>
+      <div id="quizQuestions"></div>
+      <div class="active-actions">
+        <button id="btnSubmitQuiz" class="btn btn-green">Submit</button>
+        <button id="btnDeclineQuiz" class="btn btn-red">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const API_KEY = 'YZDdyJ15hoT0YuC4eJI2gI142JfVCn3fWFNpsc1CWyh9Atiw4Q4iGjpLV5E';
+    const SPREADSHEET_ID = '10g464vyUSzcMdpFQ-pLCfQ7yKoSPzMY9N0LQbLPiXq8';
+    const BASE = 'https://api.sheetson.com/v2/sheets';
+    const QUIZ_SECONDS = 60;
+    const RANK = { SILVER: 55, GOLD: 75, PLATINUM: 85 };
+    const ALLOWED_WRITE = new Set([
+      'Balance', 'AR%', 'CR%', 'On-Time%', 'Quality%', 'Last 30-Day Orders'
+    ]);
+
+    let currentUser = null;
+    let currentRowIndex = null;
+    let tasksCache = [];
+    let removedQuizzes = new Set();
+    let activeQuiz = null;
+    let quizStartTime = null;
+    let timerInterval = null;
+    let accepted = false;
+
+    function showToast(msg, type = 'ok') {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast show ' + type;
+      setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    // Customer Rating from completed tasks (Last 30-Day Orders)
+    // 1→1.0, 2→1.5, 3→2.0, 5→2.5, 7→3.0, 10→3.5, 13→4.0, 16→4.5, 20→5.0
+    function calcCustomerRating(orders) {
+      const n = Number(orders) || 0;
+      if (n >= 20) return 5.0;
+      if (n >= 16) return 4.5;
+      if (n >= 13) return 4.0;
+      if (n >= 10) return 3.5;
+      if (n >= 7)  return 3.0;
+      if (n >= 5)  return 2.5;
+      if (n >= 3)  return 2.0;
+      if (n >= 2)  return 1.5;
+      if (n >= 1)  return 1.0;
+      return 0;
+    }
+
+    // Exact copy of your Google Sheet Overall Score formula
+    // Customer Rating is calculated from orders, not read from sheet
+    function calcOverallScore(u) {
+      const ar = Number(u['AR%']) || 0;
+      const cr = Number(u['CR%']) || 0;
+      const ot = Number(u['On-Time%']) || 0;
+      const vol = Number(u['Last 30-Day Orders']) || 0;
+      const cust = calcCustomerRating(vol);
+      const qual = Number(u['Quality%']) || 0;
+
+      let ar_pts;
+      if (ar >= 90) ar_pts = 30;
+      else if (ar >= 80) ar_pts = 26;
+      else if (ar >= 70) ar_pts = 22;
+      else if (ar >= 60) ar_pts = 19;
+      else if (ar >= 50) ar_pts = 16;
+      else if (ar >= 40) ar_pts = 14;
+      else if (ar >= 30) ar_pts = 17;
+      else ar_pts = Math.round(ar * 16 / 36);
+
+      let cr_pts;
+      if (cr >= 99) cr_pts = 15;
+      else if (cr >= 98) cr_pts = 12;
+      else if (cr >= 97) cr_pts = 10;
+      else if (cr >= 96) cr_pts = 7;
+      else if (cr >= 95) cr_pts = 6;
+      else if (cr >= 90) cr_pts = 3;
+      else cr_pts = 0;
+
+      let ot_pts;
+      if (ot >= 96) ot_pts = 30;
+      else if (ot >= 90) ot_pts = 25;
+      else if (ot >= 80) ot_pts = 18;
+      else ot_pts = 0;
+
+      let qual_pts;
+      if (qual >= 99) qual_pts = 10;
+      else if (qual >= 95) qual_pts = 8;
+      else if (qual >= 90) qual_pts = 5;
+      else qual_pts = 0;
+
+      let cust_pts;
+      if (cust >= 4.95) cust_pts = 10;
+      else if (cust >= 4.90) cust_pts = 9;
+      else if (cust >= 4.80) cust_pts = 8;
+      else if (cust >= 4.70) cust_pts = 7;
+      else if (cust >= 4.50) cust_pts = 5;
+      else cust_pts = 0;
+
+      let vol_pts;
+      if (vol >= 100) vol_pts = 5;
+      else if (vol >= 70) vol_pts = 4;
+      else if (vol >= 50) vol_pts = 2;
+      else vol_pts = 0;
+
+      return ar_pts + cr_pts + ot_pts + qual_pts + cust_pts + vol_pts;
+    }
+
+    function getRank(score) {
+      const s = Number(score) || 0;
+      if (s >= RANK.PLATINUM) return { name: 'Platinum', cls: 'rank-platinum' };
+      if (s >= RANK.GOLD) return { name: 'Gold', cls: 'rank-gold' };
+      if (s >= RANK.SILVER) return { name: 'Silver', cls: 'rank-silver' };
+      return { name: 'Unranked', cls: 'rank-none' };
+    }
+
+    function calcBonus(overall) {
+      const s = Number(overall) || 0;
+      if (s >= 85) return 3;
+      if (s >= 75) return 2;
+      if (s >= 55) return 1;
+      return 0;
+    }
+
+    function clampPct(v) {
+      return Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+    }
+
+    async function sheetGet(sheetName) {
+      const url = new URL(`${BASE}/${sheetName}`);
+      url.searchParams.set('apiKey', API_KEY);
+      url.searchParams.set('_t', Date.now());
+      const res = await fetch(url.toString(), {
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'X-Spreadsheet-Id': SPREADSHEET_ID
+        },
+        cache: 'no-store'
+      });
+      if (!res.ok) throw new Error(`GET failed: ${res.status}`);
+      return res.json();
+    }
+
+    async function sheetUpdate(sheetName, rowIndex, updates) {
+      const payload = {};
+      for (const [k, v] of Object.entries(updates)) {
+        if (ALLOWED_WRITE.has(k)) payload[k] = String(v);
+      }
+      if (!Object.keys(payload).length) return;
+      const res = await fetch(`${BASE}/${sheetName}/${rowIndex}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'X-Spreadsheet-Id': SPREADSHEET_ID,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Update failed: ${res.status} ${err}`);
+      }
+      return res.json();
+    }
+
+    function renderStats() {
+      if (!currentUser) return;
+      const u = currentUser;
+      const overall = calcOverallScore(u);
+      const rank = getRank(overall);
+      const badge = document.getElementById('rankBadge');
+      badge.textContent = rank.name;
+      badge.className = 'rank-pill ' + rank.cls;
+      document.getElementById('welcomeUser').textContent = u.UserID;
+
+      const items = [
+        { lbl: 'Balance', val: u.Balance },
+        { lbl: 'AR%', val: (u['AR%'] || 0) + '%' },
+        { lbl: 'CR%', val: (u['CR%'] || 0) + '%' },
+        { lbl: 'On-Time%', val: (u['On-Time%'] || 0) + '%' },
+        { lbl: 'Rating', val: calcCustomerRating(u['Last 30-Day Orders']) },
+        { lbl: 'Quality%', val: (u['Quality%'] || 0) + '%' },
+        { lbl: 'Orders 30d', val: u['Last 30-Day Orders'] },
+        { lbl: 'Overall', val: overall }
+      ];
+      document.getElementById('statsGrid').innerHTML = items.map(i => `
+        <div class="metric">
+          <div class="lbl">${i.lbl}</div>
+          <div class="val">${i.val}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderTasks() {
+      const el = document.getElementById('taskList');
+      const visible = tasksCache.filter(t => !removedQuizzes.has(String(t.rowIndex)));
+      if (!visible.length) {
+        el.innerHTML = '<div class="empty">No quizzes available right now</div>';
+        return;
+      }
+      const bonus = calcBonus(calcOverallScore(currentUser || {}));
+      el.innerHTML = visible.map(t => {
+        const base = Number(t.Reward || 0);
+        return `
+          <div class="quiz-card">
+            <div class="left">
+              <div class="qid">Quiz #${t.TaskID || t.rowIndex}</div>
+              <div class="preview">${[t.Question1, t.Question2, t.Question3].filter(Boolean).join(' · ')}</div>
+            </div>
+            <div class="right">
+              <div>
+                <div class="pts">+${base + bonus}</div>
+                <div class="pts-sub">${base} base + ${bonus} bonus</div>
+              </div>
+              <div class="quiz-actions">
+                <button class="btn btn-green" style="padding:8px 16px;font-size:13px" onclick="acceptQuiz(${t.rowIndex})">Accept</button>
+                <button class="btn btn-red" style="padding:8px 16px;font-size:13px" onclick="declineQuiz(${t.rowIndex})">Decline</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // LOGIN
+    document.getElementById('btnLogin').onclick = async () => {
+      const uid = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      const err = document.getElementById('loginError');
+      err.style.display = 'none';
+      if (!uid || !pass) {
+        err.textContent = 'Enter UserID and PassID';
+        err.style.display = 'block';
+        return;
+      }
+      try {
+        const data = await sheetGet('UserDB');
+        const found = (data.results || []).find(r => String(r.UserID) === uid && String(r.PassID) === pass);
+        if (!found) {
+          err.textContent = 'Invalid credentials';
+          err.style.display = 'block';
+          return;
+        }
+        currentUser = found;
+        currentRowIndex = found.rowIndex;
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('dashboardView').classList.remove('hidden');
+        renderStats();
+        document.getElementById('btnLoadTasks').click();
+        showToast('Welcome, ' + uid);
+      } catch (e) {
+        err.textContent = e.message;
+        err.style.display = 'block';
+      }
+    };
+
+    document.getElementById('btnLogout').onclick = () => {
+      stopTimer();
+      currentUser = null;
+      currentRowIndex = null;
+      activeQuiz = null;
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      document.getElementById('loginPass').value = '';
+      document.getElementById('quizArea').classList.add('hidden');
+    };
+
+    async function updateUserMetrics(changes, msg) {
+      if (!currentUser || !currentRowIndex) return;
+      try {
+        Object.assign(currentUser, changes);
+        renderStats();
+        await sheetUpdate('UserDB', currentRowIndex, changes);
+        showToast(msg || 'Updated');
+      } catch (e) {
+        showToast(e.message, 'err');
+      }
+    }
+
+    document.getElementById('btnLoadTasks').onclick = async () => {
+      try {
+        const data = await sheetGet('TaskDB');
+        tasksCache = data.results || [];
+        renderTasks();
+      } catch (e) {
+        showToast(e.message, 'err');
+      }
+    };
+
+    // ACCEPT
+    window.acceptQuiz = async function(rowIndex) {
+      if (activeQuiz) {
+        showToast('Finish current quiz first', 'err');
+        return;
+      }
+      const task = tasksCache.find(t => t.rowIndex == rowIndex);
+      if (!task) return;
+
+      removedQuizzes.add(String(rowIndex));
+      renderTasks();
+
+      const ar = clampPct(Number(currentUser['AR%']) + 1);
+      await updateUserMetrics({ 'AR%': String(ar) }, 'Accepted · AR +1%');
+
+      activeQuiz = task;
+      accepted = true;
+      quizStartTime = Date.now();
+      startTimer();
+
+      const qs = [task.Question1, task.Question2, task.Question3].filter(Boolean);
+      const bonus = calcBonus(calcOverallScore(currentUser));
+      document.getElementById('quizTaskTitle').textContent =
+        `Quiz #${task.TaskID || task.rowIndex}  ·  +${Number(task.Reward||0) + bonus} pts`;
+      document.getElementById('quizQuestions').innerHTML = qs.map((q, i) => `
+        <div class="q-block">
+          <label>Q${i + 1}. ${q}</label>
+          <input id="ans${i}" placeholder="Your answer" />
+        </div>
+      `).join('');
+      document.getElementById('quizArea').classList.remove('hidden');
+      document.getElementById('taskList').classList.add('hidden');
+    };
+
+    // DECLINE — always AR -1%
+    window.declineQuiz = async function(rowIndex) {
+      const wasActive = activeQuiz && activeQuiz.rowIndex == rowIndex;
+      removedQuizzes.add(String(rowIndex));
+
+      const ar = clampPct(Number(currentUser['AR%']) - 1);
+      let changes = { 'AR%': String(ar) };
+      let msg = 'Declined · AR -1%';
+
+      if (wasActive && accepted) {
+        const cr = clampPct(Number(currentUser['CR%']) - 1);
+        changes['CR%'] = String(cr);
+        msg = 'Declined · AR -1% & CR -1%';
+      }
+
+      await updateUserMetrics(changes, msg);
+
+      if (wasActive) {
+        stopTimer();
+        activeQuiz = null;
+        accepted = false;
+        document.getElementById('quizArea').classList.add('hidden');
+        document.getElementById('taskList').classList.remove('hidden');
+      }
+      renderTasks();
+    };
+
+    document.getElementById('btnDeclineQuiz').onclick = () => {
+      if (activeQuiz) window.declineQuiz(activeQuiz.rowIndex);
+    };
+
+    function startTimer() {
+      stopTimer();
+      const el = document.getElementById('quizTimer');
+      el.className = 'timer';
+      el.textContent = QUIZ_SECONDS;
+      timerInterval = setInterval(() => {
+        const left = Math.max(0, QUIZ_SECONDS - Math.floor((Date.now() - quizStartTime) / 1000));
+        el.textContent = left;
+        el.className = 'timer' + (left <= 10 ? ' danger' : left <= 20 ? ' warn' : '');
+        if (left === 0) clearInterval(timerInterval);
+      }, 200);
+    }
+    function stopTimer() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    }
+
+    // SUBMIT
+    document.getElementById('btnSubmitQuiz').onclick = async () => {
+      if (!activeQuiz || !currentUser) return;
+      stopTimer();
+
+      const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+      const onTime = elapsed <= QUIZ_SECONDS;
+
+      const correctAnswers = (activeQuiz.Answers || '').split(',').map(s => s.trim().toLowerCase());
+      const userAnswers = [];
+      for (let i = 0; i < 3; i++) {
+        const inp = document.getElementById('ans' + i);
+        if (inp) userAnswers.push(inp.value.trim().toLowerCase());
+      }
+
+      let correct = 0, errors = 0;
+      const totalQ = correctAnswers.filter(Boolean).length || 1;
+      userAnswers.forEach((ua, i) => {
+        if (!correctAnswers[i]) return;
+        if (ua === correctAnswers[i]) correct++;
+        else errors++;
+      });
+      if (userAnswers.length < totalQ) errors += (totalQ - userAnswers.length);
+
+      const qualityDelta = correct - errors;
+      const changes = {
+        'CR%': String(clampPct(Number(currentUser['CR%']) + 1)),
+        'Quality%': String(clampPct(Number(currentUser['Quality%'] || 100) + qualityDelta)),
+        'On-Time%': String(clampPct(Number(currentUser['On-Time%']) + (onTime ? 1 : -1))),
+        'Last 30-Day Orders': String(Number(currentUser['Last 30-Day Orders'] || 0) + 1),
+        Balance: String(Number(currentUser.Balance || 0) + Number(activeQuiz.Reward || 0) + calcBonus(calcOverallScore(currentUser)))
+      };
+
+      const earned = Number(activeQuiz.Reward || 0) + calcBonus(calcOverallScore(currentUser));
+      const msg = `Done · CR +1% · Quality ${qualityDelta >= 0 ? '+' : ''}${qualityDelta}% · ${onTime ? 'On-Time +1%' : 'Late -1%'} · +${earned} pts`;
+
+      await updateUserMetrics(changes, msg);
+
+      activeQuiz = null;
+      accepted = false;
+      document.getElementById('quizArea').classList.add('hidden');
+      document.getElementById('taskList').classList.remove('hidden');
+    };
+
+    document.getElementById('loginPass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btnLogin').click();
+    });
+  </script>
+</body>
+</html>
