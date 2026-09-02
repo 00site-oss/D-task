@@ -29,8 +29,6 @@
       font-size: 14px;
       line-height: 1.5;
     }
-
-    /* LOGIN */
     .login-wrap {
       min-height: 100vh;
       display: flex;
@@ -46,16 +44,8 @@
       border-radius: 16px;
       padding: 32px;
     }
-    .login-card h1 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .login-card p {
-      color: var(--muted);
-      margin-bottom: 24px;
-      font-size: 13px;
-    }
+    .login-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .login-card p { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
     .field { margin-bottom: 14px; }
     .field label {
       display: block;
@@ -103,14 +93,7 @@
     .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
     .btn-green { background: var(--green); color: #fff; }
     .btn-red { background: var(--red); color: #fff; }
-    .error-msg {
-      color: var(--red);
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    /* DASHBOARD */
+    .error-msg { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
     .app { max-width: 720px; margin: 0 auto; padding: 28px 20px 60px; }
     .topbar {
       display: flex;
@@ -119,13 +102,8 @@
       margin-bottom: 28px;
     }
     .topbar h1 { font-size: 20px; font-weight: 700; }
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .user-chip { display: flex; align-items: center; gap: 10px; }
     .user-chip span { font-weight: 600; font-size: 13px; }
-
     .rank-pill {
       display: inline-flex;
       align-items: center;
@@ -140,8 +118,6 @@
     .rank-silver { background: #71717a; color: #fff; }
     .rank-gold { background: #eab308; color: #18181b; }
     .rank-platinum { background: var(--purple); color: #18181b; }
-
-    /* METRICS */
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -165,26 +141,14 @@
       letter-spacing: 0.04em;
       font-weight: 500;
     }
-    .metric .val {
-      font-size: 20px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    /* SECTION */
+    .metric .val { font-size: 20px; font-weight: 700; margin-top: 4px; }
     .section-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
     }
-    .section-head h2 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    /* QUIZ CARDS */
+    .section-head h2 { font-size: 15px; font-weight: 600; color: var(--muted); }
     .quiz-list { display: flex; flex-direction: column; gap: 10px; }
     .quiz-card {
       background: var(--surface);
@@ -198,11 +162,7 @@
       flex-wrap: wrap;
     }
     .quiz-card .left { flex: 1; min-width: 180px; }
-    .quiz-card .qid {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
+    .quiz-card .qid { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
     .quiz-card .preview {
       color: var(--muted);
       font-size: 12px;
@@ -218,14 +178,9 @@
       align-items: flex-end;
       gap: 10px;
     }
-    .pts {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--green);
-    }
+    .pts { font-size: 18px; font-weight: 700; color: var(--green); }
     .pts-sub { font-size: 11px; color: var(--muted); }
     .quiz-actions { display: flex; gap: 8px; }
-
     .empty {
       text-align: center;
       color: var(--muted);
@@ -233,8 +188,6 @@
       border: 1px dashed var(--border);
       border-radius: 14px;
     }
-
-    /* ACTIVE QUIZ */
     .active-quiz {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -242,16 +195,8 @@
       padding: 24px;
       margin-top: 8px;
     }
-    .active-quiz h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .active-quiz .meta {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 16px;
-    }
+    .active-quiz h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .active-quiz .meta { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
     .timer {
       text-align: center;
       font-size: 42px;
@@ -269,14 +214,8 @@
       font-weight: 500;
       margin-bottom: 6px;
     }
-    .active-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
+    .active-actions { display: flex; gap: 10px; margin-top: 20px; }
     .active-actions .btn { flex: 1; }
-
-    /* TOAST */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -296,19 +235,14 @@
       max-width: 90vw;
       text-align: center;
     }
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.ok { border-color: var(--green); }
     .toast.err { border-color: var(--red); }
-
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN -->
   <div id="loginView" class="login-wrap">
     <div class="login-card">
       <h1>D-Task</h1>
@@ -326,7 +260,6 @@
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="dashboardView" class="app hidden">
     <div class="topbar">
       <div>
@@ -348,7 +281,6 @@
 
     <div id="taskList" class="quiz-list"></div>
 
-    <!-- Active quiz panel -->
     <div id="quizArea" class="active-quiz hidden">
       <h3>Quiz in progress</h3>
       <div id="quizTaskTitle" class="meta"></div>
@@ -370,13 +302,13 @@
     const QUIZ_SECONDS = 60;
     const RANK = { SILVER: 55, GOLD: 75, PLATINUM: 85 };
     const ALLOWED_WRITE = new Set([
-      'Balance', 'AR%', 'CR%', 'On-Time%', 'Quality%', 'Last 30-Day Orders'
+      'Balance', 'AR%', 'CR%', 'On-Time%', 'Quality%', 'Last 30-Day Orders',
+      'Customer Rating', 'Overall Score'
     ]);
 
     let currentUser = null;
     let currentRowIndex = null;
     let tasksCache = [];
-    let removedQuizzes = new Set();
     let activeQuiz = null;
     let quizStartTime = null;
     let timerInterval = null;
@@ -389,24 +321,20 @@
       setTimeout(() => el.classList.remove('show'), 3200);
     }
 
-    // Customer Rating from completed tasks (Last 30-Day Orders)
-    // 1→1.0, 2→1.5, 3→2.0, 5→2.5, 7→3.0, 10→3.5, 13→4.0, 16→4.5, 20→5.0
     function calcCustomerRating(orders) {
       const n = Number(orders) || 0;
       if (n >= 20) return 5.0;
       if (n >= 16) return 4.5;
       if (n >= 13) return 4.0;
       if (n >= 10) return 3.5;
-      if (n >= 7)  return 3.0;
-      if (n >= 5)  return 2.5;
-      if (n >= 3)  return 2.0;
-      if (n >= 2)  return 1.5;
-      if (n >= 1)  return 1.0;
+      if (n >= 7) return 3.0;
+      if (n >= 5) return 2.5;
+      if (n >= 3) return 2.0;
+      if (n >= 2) return 1.5;
+      if (n >= 1) return 1.0;
       return 0;
     }
 
-    // Exact copy of your Google Sheet Overall Score formula
-    // Customer Rating is calculated from orders, not read from sheet
     function calcOverallScore(u) {
       const ar = Number(u['AR%']) || 0;
       const cr = Number(u['CR%']) || 0;
@@ -520,6 +448,7 @@
       return res.json();
     }
 
+    // DELETE a row from TaskDB (permanent)
     async function sheetDelete(sheetName, rowIndex) {
       const res = await fetch(`${BASE}/${sheetName}/${rowIndex}`, {
         method: 'DELETE',
@@ -528,6 +457,7 @@
           'X-Spreadsheet-Id': SPREADSHEET_ID
         }
       });
+      // 204 = success, also accept 200
       if (!res.ok && res.status !== 204) {
         const err = await res.text();
         throw new Error(`Delete failed: ${res.status} ${err}`);
@@ -565,13 +495,12 @@
 
     function renderTasks() {
       const el = document.getElementById('taskList');
-      const visible = tasksCache.filter(t => !removedQuizzes.has(String(t.rowIndex)));
-      if (!visible.length) {
+      if (!tasksCache.length) {
         el.innerHTML = '<div class="empty">No quizzes available right now</div>';
         return;
       }
       const bonus = calcBonus(calcOverallScore(currentUser || {}));
-      el.innerHTML = visible.map(t => {
+      el.innerHTML = tasksCache.map(t => {
         const base = Number(t.Reward || 0);
         return `
           <div class="quiz-card">
@@ -594,7 +523,6 @@
       }).join('');
     }
 
-    // LOGIN
     document.getElementById('btnLogin').onclick = async () => {
       const uid = document.getElementById('loginUser').value.trim();
       const pass = document.getElementById('loginPass').value.trim();
@@ -618,6 +546,20 @@
         document.getElementById('loginView').classList.add('hidden');
         document.getElementById('dashboardView').classList.remove('hidden');
         renderStats();
+        // Sync calculated Rating + Overall to sheet on login
+        (async () => {
+          try {
+            const rating = calcCustomerRating(currentUser['Last 30-Day Orders']);
+            const overall = calcOverallScore(currentUser);
+            await sheetUpdate('UserDB', currentRowIndex, {
+              'Customer Rating': String(rating),
+              'Overall Score': String(overall)
+            });
+            currentUser['Customer Rating'] = String(rating);
+            currentUser['Overall Score'] = String(overall);
+            renderStats();
+          } catch (_) {}
+        })();
         document.getElementById('btnLoadTasks').click();
         showToast('Welcome, ' + uid);
       } catch (e) {
@@ -641,6 +583,13 @@
       if (!currentUser || !currentRowIndex) return;
       try {
         Object.assign(currentUser, changes);
+        // Always sync calculated Rating + Overall to the sheet
+        const rating = calcCustomerRating(currentUser['Last 30-Day Orders']);
+        const overall = calcOverallScore(currentUser);
+        changes['Customer Rating'] = String(rating);
+        changes['Overall Score'] = String(overall);
+        currentUser['Customer Rating'] = String(rating);
+        currentUser['Overall Score'] = String(overall);
         renderStats();
         await sheetUpdate('UserDB', currentRowIndex, changes);
         showToast(msg || 'Updated');
@@ -659,7 +608,7 @@
       }
     };
 
-    // ACCEPT
+    // ACCEPT → AR +1%, DELETE from TaskDB, keep in memory for this session only
     window.acceptQuiz = async function(rowIndex) {
       if (activeQuiz) {
         showToast('Finish current quiz first', 'err');
@@ -668,19 +617,19 @@
       const task = tasksCache.find(t => t.rowIndex == rowIndex);
       if (!task) return;
 
-      removedQuizzes.add(String(rowIndex));
+      // Remove from UI immediately
+      tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
       renderTasks();
 
       const ar = clampPct(Number(currentUser['AR%']) + 1);
       await updateUserMetrics({ 'AR%': String(ar) }, 'Accepted · AR +1%');
 
-      // Remove from TaskDB immediately so it never reappears after logout/login
-      // (quiz data stays in memory for this session only)
+      // DELETE permanently from TaskDB
       try {
         await sheetDelete('TaskDB', rowIndex);
-        tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
       } catch (e) {
-        console.warn('Delete on accept failed', e);
+        console.warn('Delete on accept:', e);
+        showToast('Accepted but delete failed: ' + e.message, 'err');
       }
 
       activeQuiz = task;
@@ -691,7 +640,7 @@
       const qs = [task.Question1, task.Question2, task.Question3].filter(Boolean);
       const bonus = calcBonus(calcOverallScore(currentUser));
       document.getElementById('quizTaskTitle').textContent =
-        `Quiz #${task.TaskID || task.rowIndex}  ·  +${Number(task.Reward||0) + bonus} pts`;
+        `Quiz #${task.TaskID || task.rowIndex} · +${Number(task.Reward || 0) + bonus} pts`;
       document.getElementById('quizQuestions').innerHTML = qs.map((q, i) => `
         <div class="q-block">
           <label>Q${i + 1}. ${q}</label>
@@ -702,10 +651,9 @@
       document.getElementById('taskList').classList.add('hidden');
     };
 
-    // DECLINE — always AR -1%
+    // DECLINE → AR -1% (CR -1% if after accept), DELETE from TaskDB
     window.declineQuiz = async function(rowIndex) {
       const wasActive = activeQuiz && activeQuiz.rowIndex == rowIndex;
-      removedQuizzes.add(String(rowIndex));
 
       const ar = clampPct(Number(currentUser['AR%']) - 1);
       let changes = { 'AR%': String(ar) };
@@ -719,13 +667,14 @@
 
       await updateUserMetrics(changes, msg);
 
-      // Remove from TaskDB so it never shows again (even after re-login)
+      // DELETE permanently
       try {
         await sheetDelete('TaskDB', rowIndex);
-        tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
       } catch (e) {
-        console.warn('Delete TaskDB failed', e);
+        console.warn('Delete on decline:', e);
       }
+
+      tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
 
       if (wasActive) {
         stopTimer();
@@ -757,7 +706,7 @@
       if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
     }
 
-    // SUBMIT
+    // SUBMIT → update metrics, quiz already deleted on accept
     document.getElementById('btnSubmitQuiz').onclick = async () => {
       if (!activeQuiz || !currentUser) return;
       stopTimer();
@@ -795,15 +744,10 @@
 
       await updateUserMetrics(changes, msg);
 
-      // Remove completed quiz from TaskDB permanently
+      // Safety: try delete again in case accept-delete failed
       try {
-        const doneId = activeQuiz.rowIndex;
-        await sheetDelete('TaskDB', doneId);
-        tasksCache = tasksCache.filter(t => t.rowIndex != doneId);
-        removedQuizzes.add(String(doneId));
-      } catch (e) {
-        console.warn('Delete completed quiz failed', e);
-      }
+        if (activeQuiz.rowIndex) await sheetDelete('TaskDB', activeQuiz.rowIndex);
+      } catch (_) {}
 
       activeQuiz = null;
       accepted = false;
