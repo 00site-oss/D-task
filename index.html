@@ -118,30 +118,126 @@
     .rank-silver { background: #71717a; color: #fff; }
     .rank-gold { background: #eab308; color: #18181b; }
     .rank-platinum { background: var(--purple); color: #18181b; }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    @media (max-width: 600px) {
-      .metrics { grid-template-columns: repeat(2, 1fr); }
-    }
-    .metric {
+    .balance-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: border-color .15s;
     }
-    .metric .lbl {
+    .balance-card:hover { border-color: var(--accent); }
+    .balance-card .bal-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .balance-card .bal-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .balance-card .bal-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .currency-switch {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .currency-switch button {
+      padding: 5px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .currency-switch button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .rank-progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .rank-progress .rp-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .rank-progress .rp-bar {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .rank-progress .rp-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #71717a, #eab308, #a78bfa);
+      transition: width .3s ease;
+    }
+    .rank-progress .rp-labels {
+      display: flex;
+      justify-content: space-between;
       font-size: 11px;
       color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    }
+    .rank-progress .rp-next {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .metric-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-row .mr-left .mr-name {
+      font-size: 14px;
       font-weight: 500;
     }
-    .metric .val { font-size: 20px; font-weight: 700; margin-top: 4px; }
+    .metric-row .mr-left .mr-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .metric-row .mr-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .metric-row .mr-right .bad { color: var(--red); }
+    .metric-row .mr-right .ok { color: var(--green); }
+    .metric-row .mr-right .arrow { color: var(--muted); font-weight: 400; }
+    .metric-row .mr-right .target { color: var(--text); }
     .section-head {
       display: flex;
       justify-content: space-between;
@@ -318,7 +414,20 @@
       </div>
     </div>
 
-    <div class="metrics" id="statsGrid"></div>
+    <div id="balanceCard" class="balance-card">
+      <div class="bal-label">Balance</div>
+      <div class="bal-value" id="balMain">0 pts</div>
+      <div class="bal-sub" id="balSub">≈ $0.00</div>
+      <div class="currency-switch">
+        <button type="button" data-cur="pts" class="active">PTS</button>
+        <button type="button" data-cur="usd">USD</button>
+        <button type="button" data-cur="gbp">GBP</button>
+      </div>
+    </div>
+
+    <div class="rank-progress" id="rankProgress"></div>
+
+    <div class="metric-list" id="statsGrid"></div>
 
     <div class="section-head">
       <h2>Available Quizzes</h2>
@@ -541,6 +650,16 @@
       return true;
     }
 
+    let currency = 'pts'; // pts | usd | gbp
+    const PT_TO_USD = 0.0025;  // 2 pts = $0.005
+    const PT_TO_GBP = 0.00185; // 2 pts = £0.0037
+
+    function formatMoney(pts, cur) {
+      if (cur === 'usd') return '$' + (pts * PT_TO_USD).toFixed(4);
+      if (cur === 'gbp') return '£' + (pts * PT_TO_GBP).toFixed(4);
+      return Math.round(pts) + ' pts';
+    }
+
     function renderStats() {
       if (!currentUser) return;
       const u = currentUser;
@@ -551,22 +670,121 @@
       badge.className = 'rank-pill ' + rank.cls;
       document.getElementById('welcomeUser').textContent = u.UserID;
 
-      const items = [
-        { lbl: 'Balance', val: u.Balance },
-        { lbl: 'AR%', val: (u['AR%'] || 0) + '%' },
-        { lbl: 'CR%', val: (u['CR%'] || 0) + '%' },
-        { lbl: 'On-Time%', val: (u['On-Time%'] || 0) + '%' },
-        { lbl: 'Rating', val: calcCustomerRating(u['Last 30-Day Orders']) },
-        { lbl: 'Quality%', val: (u['Quality%'] || 0) + '%' },
-        { lbl: 'Orders 30d', val: u['Last 30-Day Orders'] },
-        { lbl: 'Overall', val: overall }
-      ];
-      document.getElementById('statsGrid').innerHTML = items.map(i => `
-        <div class="metric">
-          <div class="lbl">${i.lbl}</div>
-          <div class="val">${i.val}</div>
+      // Balance
+      const pts = Number(u.Balance) || 0;
+      const balMain = document.getElementById('balMain');
+      const balSub = document.getElementById('balSub');
+      if (currency === 'pts') {
+        balMain.textContent = Math.round(pts) + ' pts';
+        balSub.textContent = '≈ $' + (pts * PT_TO_USD).toFixed(4) + ' · £' + (pts * PT_TO_GBP).toFixed(4);
+      } else if (currency === 'usd') {
+        balMain.textContent = '$' + (pts * PT_TO_USD).toFixed(4);
+        balSub.textContent = Math.round(pts) + ' pts · £' + (pts * PT_TO_GBP).toFixed(4);
+      } else {
+        balMain.textContent = '£' + (pts * PT_TO_GBP).toFixed(4);
+        balSub.textContent = Math.round(pts) + ' pts · $' + (pts * PT_TO_USD).toFixed(4);
+      }
+
+      // Rank progress
+      const nextThreshold = overall >= 85 ? 100 : overall >= 75 ? 85 : overall >= 55 ? 75 : 55;
+      const nextName = overall >= 85 ? 'Max (Platinum)' : overall >= 75 ? 'Platinum' : overall >= 55 ? 'Gold' : 'Silver';
+      const pct = Math.min(100, (overall / nextThreshold) * 100);
+      const need = Math.max(0, nextThreshold - overall);
+      document.getElementById('rankProgress').innerHTML = `
+        <div class="rp-title">Progress to ${nextName}</div>
+        <div class="rp-bar"><div class="rp-fill" style="width:${pct}%"></div></div>
+        <div class="rp-labels">
+          <span>Score ${overall}</span>
+          <span>${nextThreshold}</span>
         </div>
-      `).join('');
+        <div class="rp-next">${overall >= 85 ? 'You are Platinum 🎉' : need + ' points to ' + nextName}</div>
+      `;
+
+      // Metric rows (DoorDash style)
+      const ar = Number(u['AR%']) || 0;
+      const cr = Number(u['CR%']) || 0;
+      const ot = Number(u['On-Time%']) || 0;
+      const qual = Number(u['Quality%']) || 0;
+      const orders = Number(u['Last 30-Day Orders']) || 0;
+      const rating = calcCustomerRating(orders);
+
+      const rows = [
+        {
+          name: 'Acceptance rate',
+          hint: ar < 50 ? 'Raise to 50%' : ar < 70 ? 'Raise to 70%' : ar < 90 ? 'Raise to 90%' : 'Great!',
+          cur: ar,
+          target: ar < 50 ? 50 : ar < 70 ? 70 : ar < 90 ? 90 : null,
+          ok: ar >= 50,
+          suffix: '%'
+        },
+        {
+          name: 'Completion rate',
+          hint: cr < 95 ? 'Raise to 95%' : cr < 99 ? 'Raise to 99%' : 'Perfect',
+          cur: cr,
+          target: cr < 95 ? 95 : cr < 99 ? 99 : null,
+          ok: cr >= 95,
+          suffix: '%'
+        },
+        {
+          name: 'On-time rate',
+          hint: ot < 80 ? 'Raise to 80%' : ot < 96 ? 'Raise to 96%' : 'Excellent',
+          cur: ot,
+          target: ot < 80 ? 80 : ot < 96 ? 96 : null,
+          ok: ot >= 80,
+          suffix: '%'
+        },
+        {
+          name: 'Quality rate',
+          hint: qual < 90 ? 'Raise to 90%' : qual < 99 ? 'Raise to 99%' : 'Excellent',
+          cur: qual,
+          target: qual < 90 ? 90 : qual < 99 ? 99 : null,
+          ok: qual >= 90,
+          suffix: '%'
+        },
+        {
+          name: 'Customer rating',
+          hint: rating < 4.5 ? 'Raise to 4.5' : rating < 5 ? 'Raise to 5.0' : 'Perfect',
+          cur: rating,
+          target: rating < 4.5 ? 4.5 : rating < 5 ? 5.0 : null,
+          ok: rating >= 4.5,
+          suffix: ''
+        },
+        {
+          name: 'Last 30-day orders',
+          hint: orders < 20 ? 'Complete more quizzes' : 'Strong volume',
+          cur: orders,
+          target: orders < 20 ? 20 : null,
+          ok: orders >= 20,
+          suffix: ''
+        },
+        {
+          name: 'Overall score',
+          hint: overall < 55 ? 'Reach Silver (55)' : overall < 75 ? 'Reach Gold (75)' : overall < 85 ? 'Reach Platinum (85)' : 'Platinum!',
+          cur: overall,
+          target: overall < 55 ? 55 : overall < 75 ? 75 : overall < 85 ? 85 : null,
+          ok: overall >= 55,
+          suffix: ''
+        }
+      ];
+
+      document.getElementById('statsGrid').innerHTML = rows.map(r => {
+        const curCls = r.ok ? 'ok' : 'bad';
+        let right;
+        if (r.target != null) {
+          right = `<span class="${curCls}">${r.cur}${r.suffix}</span><span class="arrow">→</span><span class="target">${r.target}${r.suffix}</span>`;
+        } else {
+          right = `<span class="ok">✓ ${r.cur}${r.suffix}</span>`;
+        }
+        return `
+          <div class="metric-row">
+            <div class="mr-left">
+              <div class="mr-name">${r.name}</div>
+              <div class="mr-hint">${r.hint}</div>
+            </div>
+            <div class="mr-right">${right}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderTasks() {
@@ -839,6 +1057,17 @@
     document.getElementById('btnHelp').onclick = () => {
       document.getElementById('helpPanel').classList.toggle('hidden');
     };
+
+    // Currency switch
+    document.querySelectorAll('.currency-switch button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currency = btn.dataset.cur;
+        document.querySelectorAll('.currency-switch button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderStats();
+      });
+    });
   </script>
 </body>
 </html>
