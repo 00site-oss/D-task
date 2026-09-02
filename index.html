@@ -335,60 +335,21 @@
       return 0;
     }
 
+    // Real Overall Score formula (0-100)
+    // AR×0.25 + CR×0.35 + OnTime×0.30 + (Rating/5)×10
     function calcOverallScore(u) {
       const ar = Number(u['AR%']) || 0;
       const cr = Number(u['CR%']) || 0;
       const ot = Number(u['On-Time%']) || 0;
       const vol = Number(u['Last 30-Day Orders']) || 0;
       const cust = calcCustomerRating(vol);
-      const qual = Number(u['Quality%']) || 0;
 
-      let ar_pts;
-      if (ar >= 90) ar_pts = 30;
-      else if (ar >= 80) ar_pts = 26;
-      else if (ar >= 70) ar_pts = 22;
-      else if (ar >= 60) ar_pts = 19;
-      else if (ar >= 50) ar_pts = 16;
-      else if (ar >= 40) ar_pts = 14;
-      else if (ar >= 30) ar_pts = 17;
-      else ar_pts = Math.round(ar * 16 / 36);
+      const arPts = ar * 0.25;
+      const crPts = cr * 0.35;
+      const otPts = ot * 0.30;
+      const custPts = (cust / 5.0) * 10;
 
-      let cr_pts;
-      if (cr >= 99) cr_pts = 15;
-      else if (cr >= 98) cr_pts = 12;
-      else if (cr >= 97) cr_pts = 10;
-      else if (cr >= 96) cr_pts = 7;
-      else if (cr >= 95) cr_pts = 6;
-      else if (cr >= 90) cr_pts = 3;
-      else cr_pts = 0;
-
-      let ot_pts;
-      if (ot >= 96) ot_pts = 30;
-      else if (ot >= 90) ot_pts = 25;
-      else if (ot >= 80) ot_pts = 18;
-      else ot_pts = 0;
-
-      let qual_pts;
-      if (qual >= 99) qual_pts = 10;
-      else if (qual >= 95) qual_pts = 8;
-      else if (qual >= 90) qual_pts = 5;
-      else qual_pts = 0;
-
-      let cust_pts;
-      if (cust >= 4.95) cust_pts = 10;
-      else if (cust >= 4.90) cust_pts = 9;
-      else if (cust >= 4.80) cust_pts = 8;
-      else if (cust >= 4.70) cust_pts = 7;
-      else if (cust >= 4.50) cust_pts = 5;
-      else cust_pts = 0;
-
-      let vol_pts;
-      if (vol >= 100) vol_pts = 5;
-      else if (vol >= 70) vol_pts = 4;
-      else if (vol >= 50) vol_pts = 2;
-      else vol_pts = 0;
-
-      return ar_pts + cr_pts + ot_pts + qual_pts + cust_pts + vol_pts;
+      return Math.round(arPts + crPts + otPts + custPts);
     }
 
     function getRank(score) {
