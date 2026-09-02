@@ -471,7 +471,7 @@
         <tr><td>On-Time%</td><td>Did you finish within 60 seconds?</td><td>≤60s → +1% · Late → −1%</td></tr>
         <tr><td>Quality%</td><td>How accurate your answers are</td><td>+1% per correct · −1% per error</td></tr>
         <tr><td>Rating</td><td>Customer rating from completed tasks</td><td>Based on Orders (see table below)</td></tr>
-        <tr><td>Orders 30d</td><td>Tasks completed in last 30 days</td><td>+1 each time you submit a quiz</td></tr>
+        <tr><td>Orders 30d</td><td>Tasks completed in last 30 days</td><td>+1 on submit · −1 per inactive day (no completed tasks)</td></tr>
         <tr><td>Balance</td><td>Points earned from rewards + rank bonus</td><td>Added on every completed quiz</td></tr>
       </table>
 
@@ -594,6 +594,47 @@
 
     function clampPct(v) {
       return Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+    }
+
+    // --- Last 30-Day Orders daily decay ---
+    // Each calendar day without completing a task → −1 order (min 0)
+    function storageKey(uid) {
+      return 'dtask_lastActive_' + uid;
+    }
+
+    function todayStr() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function daysBetween(a, b) {
+      // a, b as YYYY-MM-DD
+      const da = new Date(a + 'T00:00:00');
+      const db = new Date(b + 'T00:00:00');
+      return Math.max(0, Math.floor((db - da) / 86400000));
+    }
+
+    function markActive(uid) {
+      try { localStorage.setItem(storageKey(uid), todayStr()); } catch (_) {}
+    }
+
+    // Apply decay based on days since last activity. Returns new orders value.
+    function applyOrderDecay(uid, currentOrders) {
+      let last = null;
+      try { last = localStorage.getItem(storageKey(uid)); } catch (_) {}
+      const today = todayStr();
+      if (!last) {
+        // First time we see this user in this browser — set today, no decay yet
+        markActive(uid);
+        return Number(currentOrders) || 0;
+      }
+      const days = daysBetween(last, today);
+      if (days <= 0) return Number(currentOrders) || 0;
+      const next = Math.max(0, (Number(currentOrders) || 0) - days);
+      // Update lastActive to today so we don't double-decay on same day re-login
+      // (only decay once per calendar day gap)
+      markActive(uid);
+      return next;
     }
 
     async function sheetGet(sheetName) {
@@ -839,16 +880,29 @@
         currentRowIndex = found.rowIndex;
         document.getElementById('loginView').classList.add('hidden');
         document.getElementById('dashboardView').classList.remove('hidden');
+
+        // Apply daily decay to Last 30-Day Orders (−1 per inactive day)
+        const ordersBefore = Number(currentUser['Last 30-Day Orders']) || 0;
+        const ordersAfter = applyOrderDecay(uid, ordersBefore);
+        if (ordersAfter !== ordersBefore) {
+          currentUser['Last 30-Day Orders'] = String(ordersAfter);
+          showToast('Orders decayed: ' + ordersBefore + ' → ' + ordersAfter + ' (−' + (ordersBefore - ordersAfter) + ' inactive day' + (ordersBefore - ordersAfter > 1 ? 's' : '') + ')');
+        }
+
         renderStats();
-        // Sync calculated Rating + Overall to sheet on login
+        // Sync Rating, Overall, and possibly decayed Orders to sheet
         (async () => {
           try {
             const rating = calcCustomerRating(currentUser['Last 30-Day Orders']);
             const overall = calcOverallScore(currentUser);
-            await sheetUpdate('UserDB', currentRowIndex, {
+            const payload = {
               'Customer Rating': String(rating),
               'Overall Score': String(overall)
-            });
+            };
+            if (ordersAfter !== ordersBefore) {
+              payload['Last 30-Day Orders'] = String(ordersAfter);
+            }
+            await sheetUpdate('UserDB', currentRowIndex, payload);
             currentUser['Customer Rating'] = String(rating);
             currentUser['Overall Score'] = String(overall);
             renderStats();
@@ -1037,6 +1091,9 @@
       const msg = `Done · CR +1% · Quality ${qualityDelta >= 0 ? '+' : ''}${qualityDelta}% · ${onTime ? 'On-Time +1%' : 'Late -1%'} · +${earned} pts`;
 
       await updateUserMetrics(changes, msg);
+
+      // Completing a task counts as activity — reset decay clock
+      markActive(currentUser.UserID);
 
       // Safety: try delete again in case accept-delete failed
       try {
