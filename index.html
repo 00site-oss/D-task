@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -521,6 +520,21 @@
       return res.json();
     }
 
+    async function sheetDelete(sheetName, rowIndex) {
+      const res = await fetch(`${BASE}/${sheetName}/${rowIndex}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'X-Spreadsheet-Id': SPREADSHEET_ID
+        }
+      });
+      if (!res.ok && res.status !== 204) {
+        const err = await res.text();
+        throw new Error(`Delete failed: ${res.status} ${err}`);
+      }
+      return true;
+    }
+
     function renderStats() {
       if (!currentUser) return;
       const u = currentUser;
@@ -660,6 +674,15 @@
       const ar = clampPct(Number(currentUser['AR%']) + 1);
       await updateUserMetrics({ 'AR%': String(ar) }, 'Accepted · AR +1%');
 
+      // Remove from TaskDB immediately so it never reappears after logout/login
+      // (quiz data stays in memory for this session only)
+      try {
+        await sheetDelete('TaskDB', rowIndex);
+        tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
+      } catch (e) {
+        console.warn('Delete on accept failed', e);
+      }
+
       activeQuiz = task;
       accepted = true;
       quizStartTime = Date.now();
@@ -695,6 +718,14 @@
       }
 
       await updateUserMetrics(changes, msg);
+
+      // Remove from TaskDB so it never shows again (even after re-login)
+      try {
+        await sheetDelete('TaskDB', rowIndex);
+        tasksCache = tasksCache.filter(t => t.rowIndex != rowIndex);
+      } catch (e) {
+        console.warn('Delete TaskDB failed', e);
+      }
 
       if (wasActive) {
         stopTimer();
@@ -764,10 +795,21 @@
 
       await updateUserMetrics(changes, msg);
 
+      // Remove completed quiz from TaskDB permanently
+      try {
+        const doneId = activeQuiz.rowIndex;
+        await sheetDelete('TaskDB', doneId);
+        tasksCache = tasksCache.filter(t => t.rowIndex != doneId);
+        removedQuizzes.add(String(doneId));
+      } catch (e) {
+        console.warn('Delete completed quiz failed', e);
+      }
+
       activeQuiz = null;
       accepted = false;
       document.getElementById('quizArea').classList.add('hidden');
       document.getElementById('taskList').classList.remove('hidden');
+      renderTasks();
     };
 
     document.getElementById('loginPass').addEventListener('keydown', e => {
