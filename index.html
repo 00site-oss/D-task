@@ -335,21 +335,24 @@
       return 0;
     }
 
-    // Real Overall Score formula (0-100)
-    // AR×0.25 + CR×0.35 + OnTime×0.30 + (Rating/5)×10
+    // DoorDash-style 6-factor Overall Score (0-100)
+    // AR max 30, CR max 15, On-Time max 30, Rating max 10, Quality max 10, Orders max 5
     function calcOverallScore(u) {
       const ar = Number(u['AR%']) || 0;
       const cr = Number(u['CR%']) || 0;
       const ot = Number(u['On-Time%']) || 0;
+      const qual = Number(u['Quality%']) || 0;
       const vol = Number(u['Last 30-Day Orders']) || 0;
       const cust = calcCustomerRating(vol);
 
-      const arPts = ar * 0.25;
-      const crPts = cr * 0.35;
-      const otPts = ot * 0.30;
-      const custPts = (cust / 5.0) * 10;
+      const arPts = ar * 0.30;           // max 30
+      const crPts = cr * 0.15;           // max 15
+      const otPts = ot * 0.30;           // max 30
+      const custPts = (cust / 5.0) * 10; // max 10
+      const qualPts = qual * 0.10;       // max 10
+      const volPts = Math.min(vol * 0.05, 5); // max 5 (at 100 orders)
 
-      return Math.round(arPts + crPts + otPts + custPts);
+      return Math.round(arPts + crPts + otPts + custPts + qualPts + volPts);
     }
 
     function getRank(score) {
